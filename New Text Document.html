@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fun Click Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      background-color: #d3d3d3; /* Light gray background */
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      text-align: center;
+    }
+    h1, p {
+      margin: 10px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    #score, #timer {
+      font-size: 2em;
+      margin: 10px;
+    }
+    #game-over {
+      font-size: 1.5em;
+      color: red;
+      display: none;
+    }
+    /* Restart Button */
+    #restart-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      background-color: #ff66b2;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #restart-button:hover {
+      background-color: #ff3385;
+    }
+
+    /* Leaderboard Styling */
+    #leaderboard {
+      display: none;
+      margin-top: 20px;
+      color: white;
+      text-align: left;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+    }
+    #leaderboard h2 {
+      margin-bottom: 10px;
+    }
+    #leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+    #leaderboard ul li {
+      font-size: 1.2em;
+    }
+
+    /* Cool click effect */
+    .click-effect {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 102, 178, 0.7); /* Light pink */
+      transform: scale(0);
+      animation: click-animation 0.5s ease-out;
+    }
+
+    @keyframes click-animation {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(10);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body onclick="increaseScore(event)">
+  <!-- Text and timer above the page -->
+  <div>
+    <h1>Full-Page Click Game</h1>
+    <p>Click as fast as you can in 10 seconds!</p>
+    <div id="timer">Time Left: 10s</div>
+    <div id="score">Score: 0</div>
+  </div>
+
+  <p id="game-over">Time's up! Your final score is <span id="final-score"></span>.</p>
+
+  <!-- Restart Button -->
+  <button id="restart-button" onclick="restartGame()">Restart Game</button>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard">
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard-list">
+      <!-- List of top 5 scores -->
+    </ul>
+  </div>
+
+  <script>
+    let score = 0;
+    let timeLeft = 10; // Timer duration set to 10 seconds
+    let timerInterval;
+
+    // Function to start the timer
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').textContent = `Time Left: ${timeLeft}s`;
+
+        if (timeLeft === 0) {
+          clearInterval(timerInterval);
+          endGame();
+        }
+      }, 1000);
+    }
+
+    // Function to increase score and add click effect
+    function increaseScore(event) {
+      if (timeLeft > 0) {
+        score++;
+        document.getElementById('score').textContent = `Score: ${score}`;
+        createClickEffect(event);
+      }
+    }
+
+    // Create the click effect (animation on click)
+    function createClickEffect(event) {
+      const effect = document.createElement('div');
+      effect.classList.add('click-effect');
+      document.body.appendChild(effect);
+      
+      const size = Math.max(window.innerWidth, window.innerHeight) * 0.2;
+      effect.style.width = `${size}px`;
+      effect.style.height = `${size}px`;
+      effect.style.left = `${event.clientX - size / 2}px`;
+      effect.style.top = `${event.clientY - size / 2}px`;
+
+      // Remove the effect after animation
+      setTimeout(() => effect.remove(), 500);
+    }
+
+    // Function to end the game
+    function endGame() {
+      document.body.onclick = null; // Disable clicking
+      document.getElementById('game-over').style.display = 'block';
+      document.getElementById('final-score').textContent = score;
+      document.getElementById('restart-button').style.display = 'block'; // Show restart button
+
+      // Save the score in localStorage and update leaderboard
+      saveScore(score);
+      displayLeaderboard();
+    }
+
+    // Function to save the score in localStorage
+    function saveScore(newScore) {
+      let scores = JSON.parse(localStorage.getItem('leaderboard')) || [];
+      scores.push(newScore);
+      scores.sort((a, b) => b - a); // Sort in descending order
+      scores = scores.slice(0, 5); // Keep top 5 scores
+      localStorage.setItem('leaderboard', JSON.stringify(scores));
+    }
+
+    // Function to display the leaderboard
+    function displayLeaderboard() {
+      let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+      const leaderboardList = document.getElementById('leaderboard-list');
+      leaderboardList.innerHTML = '';
+
+      leaderboard.forEach((score, index) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `#${index + 1}: ${score} points`;
+        leaderboardList.appendChild(listItem);
+      });
+
+      document.getElementById('leaderboard').style.display = 'block'; // Show leaderboard
+    }
+
+    // Function to restart the game
+    function restartGame() {
+      score = 0;
+      timeLeft = 10;
+      document.getElementById('score').textContent = `Score: ${score}`;
+      document.getElementById('timer').textContent = `Time Left: ${timeLeft}s`;
+      document.getElementById('game-over').style.display = 'none';
+      document.getElementById('restart-button').style.display = 'none'; // Hide restart button
+      document.getElementById('leaderboard').style.display = 'none'; // Hide leaderboard
+      document.body.onclick = increaseScore; // Re-enable clicking
+      startTimer();
+    }
+
+    // Start the game when the page loads
+    window.onload = () => {
+      startTimer();
+      setInterval(() => {}, 1000); // Ensure the color doesn't reset on idle
+      document.getElementById('restart-button').style.display = 'none'; // Hide restart button initially
+      document.getElementById('leaderboard').style.display = 'none'; // Hide leaderboard initially
+    };
+  </script>
+</body>
+</html>
