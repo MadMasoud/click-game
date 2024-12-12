@@ -1,169 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Click Game</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: lightgray;
-            text-align: center;
-            font-family: Arial, sans-serif;
-        }
+<html >
+<style>
+table, td {
+border:2px solid black;
+border-collapse:collapse;
+padding:20px;
+	margin-top: 200px;
 
-        #gameArea {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: lightgray;
-            cursor: pointer;
-            transition: background-color 0.1s;
-        }
-
-        #usernameForm {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        #scoreDisplay {
-            font-size: 1.5em;
-            margin-top: 20px;
-        }
-
-        #startButton {
-            padding: 10px 20px;
-            font-size: 1.2em;
-            cursor: pointer;
-            margin: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-
-        #restartButton {
-            padding: 10px 20px;
-            font-size: 1.2em;
-            cursor: pointer;
-            margin: 10px;
-            background-color: #f44336;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            display: none;
-        }
-
-        #userNameDisplay {
-            font-size: 1.2em;
-        }
-
-    </style>
-</head>
+}
+table {
+	width: 400px
+height: 400px
+margin: auto;
+}
+td {
+	width: 50px;
+	height: 50px;
+}
+</style>
 <body>
+<table style="height:200px" align="center">
 
-    <div id="usernameForm">
-        <h1>Enter Your Name</h1>
-        <input type="text" id="username" placeholder="Your Username">
-        <button id="startButton">Start Game</button>
-    </div>
+	<tr style="background-color: aquamarine">
 
-    <div id="gameArea">
-        <div id="scoreDisplay"></div>
-    </div>
+		<td colspan="2"></td>
+		<td colspan="2"></td>
+		<td rowspan="2"></td>
 
-    <button id="restartButton">Restart Game</button>
+	</tr>
 
-    <script>
-        let score = 0;
-        let username = '';
-        let timer = 10;
-        let interval;
-        let bestScore = localStorage.getItem('bestScore') || 0;
+		<tr style="background-color: antiquewhite">
 
-        // Elements
-        const usernameForm = document.getElementById('usernameForm');
-        const gameArea = document.getElementById('gameArea');
-        const scoreDisplay = document.getElementById('scoreDisplay');
-        const startButton = document.getElementById('startButton');
-        const restartButton = document.getElementById('restartButton');
-        const usernameInput = document.getElementById('username');
-        const userNameDisplay = document.getElementById('userNameDisplay');
+			<td rowspan="3"></td>
+			<td rowspan="2"></td>
+			<td></td>
+			<td></td>
 
-        // Event listeners
-        startButton.addEventListener('click', startGame);
-        restartButton.addEventListener('click', restartGame);
-        gameArea.addEventListener('click', handleClick);
+		</tr>
 
-        function startGame() {
-            username = usernameInput.value.trim();
-            if (!username) {
-                alert("Please enter a username!");
-                return;
-            }
+			<tr style="background-color: cadetblue">
 
-            // Store username and initialize game
-            usernameForm.style.display = 'none';
-            gameArea.style.display = 'block';
-            restartButton.style.display = 'block';
-            score = 0;
-            timer = 10;
-            scoreDisplay.textContent = `Score: ${score} | Best: ${bestScore}`;
-            startTimer();
-        }
+				<td colspan="2" rowspan="2"></td>
+				<td></td>
 
-        function restartGame() {
-            score = 0;
-            timer = 10;
-            scoreDisplay.textContent = `Score: ${score} | Best: ${bestScore}`;
-            startTimer();
-        }
+			</tr>
+				<tr style="background-color: burlywood">
 
-        function startTimer() {
-            interval = setInterval(() => {
-                if (timer <= 0) {
-                    clearInterval(interval);
-                    endGame();
-                } else {
-                    timer--;
-                    scoreDisplay.textContent = `Score: ${score} | Best: ${bestScore}`;
-                }
-            }, 1000);
-        }
+					<td></td>
+					<td></td>
 
-        function handleClick() {
-            score++;
-            if (score > bestScore) {
-                bestScore = score;
-                localStorage.setItem('bestScore', bestScore);
-            }
+				</tr>
 
-            // Change background color with each click
-            let randomColor = getRandomColor();
-            gameArea.style.backgroundColor = randomColor;
-        }
-
-        function endGame() {
-            gameArea.style.display = 'none';
-            restartButton.style.display = 'block';
-            alert(`Game Over! Your Score: ${score}`);
-        }
-
-        function getRandomColor() {
-            let hue = Math.floor(Math.random() * 360);
-            return `hsl(${hue}, 100%, 70%)`;
-        }
-    </script>
-
+</table>
 </body>
 </html>
